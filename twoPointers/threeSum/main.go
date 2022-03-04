@@ -1,15 +1,6 @@
-package main
+package threeSum
 
-import (
-	"fmt"
-	"sort"
-)
-
-func main() {
-	nums := []int{1, 2, -2, -1}
-	ans := threeSum(nums)
-	fmt.Printf("%v", ans)
-}
+import "sort"
 
 func threeSum(nums []int) [][]int {
 	var ans [][]int
@@ -25,7 +16,6 @@ func threeSum(nums []int) [][]int {
 		target := -nums[i]
 		twoSumPairs := twoSum(nums, i+1, target)
 		for _, twoSumPair := range twoSumPairs {
-
 			ans = append(ans, []int{nums[i], twoSumPair[0], twoSumPair[1]})
 		}
 	}
