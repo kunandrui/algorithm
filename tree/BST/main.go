@@ -1,4 +1,4 @@
-package bst
+package BST
 
 type TreeNode struct {
 	Val   int
@@ -6,47 +6,60 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
-func insertIntoBST(root *TreeNode, val int) *TreeNode {
+func serch(root *TreeNode, val int) *TreeNode {
 	if root == nil {
-		//插入
+		return nil
+	}
+	if val == root.Val {
+		return root
+	}
+	var res *TreeNode
+	if val < root.Val {
+		res = serch(root.Left, val)
+	} else {
+		res = serch(root.Right, val)
+	}
+	return res
+}
+
+func insert(root *TreeNode, val int) *TreeNode {
+	if root == nil {
+		// 插入
 		return &TreeNode{val, nil, nil}
 	}
 	if val < root.Val {
-		root.Left = insertIntoBST(root.Left, val)
+		root.Left = insert(root.Left, val)
 	} else {
-		root.Right = insertIntoBST(root.Right, val)
+		root.Right = insert(root.Right, val)
 	}
 	return root
 }
 
+// 后继者
 func inorderSuccessor(root *TreeNode, p *TreeNode) *TreeNode {
-	return findNext(root, p.Val)
-}
-
-func findNext(root *TreeNode, p int) *TreeNode {
 	var ans *TreeNode
 	curr := root
 	for curr != nil {
-		if p == curr.Val {
+		if p.Val == curr.Val {
 			if curr.Right != nil {
-				next := curr.Right
-				for next.Left != nil {
-					next = next.Left
+				curr = curr.Right
+				for curr.Left != nil {
+					curr = curr.Left
 				}
-				ans = next
+				ans = curr
 			}
+			break
 		}
-		if p < curr.Val {
-			//经过的点找一个最小的
+		if p.Val < curr.Val {
 			if ans == nil || ans.Val > curr.Val {
 				ans = curr
 			}
 			curr = curr.Left
-		} else {
+		}
+		if p.Val > curr.Val {
 			curr = curr.Right
 		}
 	}
-
 	return ans
 }
 
@@ -55,16 +68,18 @@ func deleteNode(root *TreeNode, key int) *TreeNode {
 		return nil
 	}
 	if key == root.Val {
-		//删除
+		//delete
 		if root.Left == nil {
 			return root.Right
 		}
 		if root.Right == nil {
 			return root.Left
 		}
-
-		next := findNext(root, key)
-		deleteNode(root, next.Val)
+		next := root.Right
+		for next.Left != nil {
+			next = next.Left
+		}
+		root.Right = deleteNode(root.Right, next.Val)
 		root.Val = next.Val
 		return root
 	}
