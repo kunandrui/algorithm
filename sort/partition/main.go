@@ -7,21 +7,14 @@ import (
 
 func main() {
 	nums := []int{5, 42, 31, 23, 10, 7, 6, 8, 9, 10}
-	quickSort(nums, 0, len(nums)-1)
+	pivot := partition(nums, 0, 9)
 	fmt.Println(nums)
-}
-
-func quickSort(nums []int, l, r int) {
-	if l >= r {
-		return
-	}
-	pivot := partition(nums, l, r)
-	quickSort(nums, l, pivot)
-	quickSort(nums, pivot+1, r)
+	fmt.Println(pivot)
 }
 
 func partition(nums []int, l, r int) int {
-	pivot := l + rand.Int()%(r-l+1)
+	pivot := l + int(rand.Float64()*float64(r-l+1))
+	fmt.Println(pivot)
 	pivotVal := nums[pivot]
 	for l <= r {
 		for nums[l] < pivotVal {
