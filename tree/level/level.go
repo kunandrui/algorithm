@@ -40,3 +40,29 @@ func levelOrder(root *TreeNode) [][]int {
 
 	return ans
 }
+
+func levelOrder2(root *TreeNode) [][]int {
+	var ans [][]int
+	if root == nil {
+		return ans
+	}
+	var deque []*TreeNode
+	deque = append(deque, root)
+	for len(deque) != 0 {
+		sz := len(deque)
+		var level []int
+		for i := 0; i < sz; i++ {
+			node := deque[0]
+			deque = deque[1:len(deque)]
+			level = append(level, node.Val)
+			if node.Left != nil {
+				deque = append(deque, node.Left)
+			}
+			if node.Right != nil {
+				deque = append(deque, node.Right)
+			}
+		}
+		ans = append(ans, level)
+	}
+	return ans
+}
