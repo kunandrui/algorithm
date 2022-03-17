@@ -12,7 +12,7 @@ type LockFreeQueue struct {
 
 type Node struct {
 	Value interface{}
-	Next *Node
+	Next  unsafe.Pointer
 }
 
 func NewLockFreeQueue() *LockFreeQueue {
@@ -25,10 +25,29 @@ func NewLockFreeQueue() *LockFreeQueue {
 }
 
 func (lfq *LockFreeQueue) Enqueue(v interface{}) {
-	node := &Node{Value:v, Next: nil}
+	node := &Node{Value: v, Next: nil}
 	for {
-		tail := (*Node)(atomic.LoadPointer(&lfq.Tail))
-		next := (*Node)(atomic.LoadPointer()
+		tail := load(&lfq.Tail)
+		next := load(&tail.Next)
+		if tail == load(&lfq.Tail) {
+			if next == nil {
+				if cas(&tail.Next, next, node) {
+					cas(&lfq.Tail, tail, node)
+					return
+				}
+			} else {
+
+			}
+		}
+
 	}
 
+}
+
+func load(p *unsafe.Pointer) *Node {
+	return (*Node)(atomic.LoadPointer(p))
+}
+
+func cas(p *unsafe.Pointer, old, new *Node) bool {
+	return atomic.CompareAndSwapPointer(p, unsafe.Pointer(old), unsafe.Pointer(new))
 }
